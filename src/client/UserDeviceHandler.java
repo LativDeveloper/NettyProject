@@ -28,7 +28,7 @@ public class UserDeviceHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.channel().close();
         System.out.println("Отключились от сервера!");
         UserDevice.getInstance().run();

@@ -75,6 +75,13 @@ public class User {
         sendMessage(query);
     }
 
+    public void sendAuthUser(String token) {
+        JSONObject query = new JSONObject();
+        query.put("action", "auth.user");
+        query.put("token", token);
+        sendMessage(query);
+    }
+
     public void sendErrorCode(String errorCode) {
         JSONObject query = new JSONObject();
         query.put("errorCode", errorCode);

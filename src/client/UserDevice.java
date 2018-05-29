@@ -94,6 +94,7 @@ public class UserDevice {
                 else
                     receiveInputConsole(params);
             } catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("Запрос должен быть формата JSON!");
             }
         }
@@ -104,7 +105,7 @@ public class UserDevice {
         for (int i = 0; i < params.length; i += 2) {
             response.put(params[i], params[i+1]);
         }
-        if (response.get("action").equals("set.login.ips")) {
+        if (response.containsKey("action") && response.get("action").equals("set.login.ips")) {
             JSONArray ips = new JSONArray();
             ips.add("111.222.333.444:1111");
             ips.add("444.333.222.111:1121");
@@ -114,7 +115,7 @@ public class UserDevice {
     }
 
     public static void main(String[] args) throws Exception {
-        userDevice = new UserDevice("localhost", 1121);
+        userDevice = new UserDevice("192.168.0.104", 1121);
         userDevice.run();
     }
 }

