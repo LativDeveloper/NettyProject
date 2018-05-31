@@ -1,21 +1,24 @@
+import db.DBUsers;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.awt.image.DataBuffer;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 
 public class Victim {
+    private DBUsers dbUsers;
     private ChannelHandlerContext context;
     private String name;
     private ArrayList<String> owners;
 
-    public Victim(ChannelHandlerContext context, String name, ArrayList<String> owners) {
+    public Victim(ChannelHandlerContext context, String name) {
         this.context = context;
         this.name = name;
-        this.owners = owners;
+        this.owners = NettyServer.getDBManager().DBUsers.getOwnersByVictim(name);
     }
 
     public void sendAuthVictim() {

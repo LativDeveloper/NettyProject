@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Users {
+public class DBUsers {
 
     private DBManager dbManager;
 
-    public Users(DBManager dbManager) {
+    public DBUsers(DBManager dbManager) {
         this.dbManager = dbManager;
     }
 
@@ -34,6 +34,20 @@ public class Users {
             e.printStackTrace();
         }
         return arrayList;
+    }
+
+    public ArrayList<String> getOwnersByVictim(String name) {
+        String query = "SELECT login FROM users WHERE victims LIKE '%"+name+"%' ";
+        ArrayList<String> result = new ArrayList<>();
+        try {
+            ResultSet resultSet = dbManager.executeQuery(query);
+            while (resultSet.next()) {
+                result.add(resultSet.getString("login"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

