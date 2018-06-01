@@ -37,8 +37,8 @@ public class UserDeviceHandler extends ChannelInboundHandlerAdapter {
     public void sendMessage(JSONObject message) {
         if (!ctx.channel().isActive()) System.out.println("Нет соединения с сервером!");
         else {
-            System.out.println("Server << " + message);
-            ChannelFuture future = this.ctx.writeAndFlush(message);
+                System.out.println("Server << " + message);
+                ctx.writeAndFlush(message);
         }
     }
 }

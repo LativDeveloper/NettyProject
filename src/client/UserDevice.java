@@ -115,7 +115,7 @@ public class UserDevice {
     }
 
     public static void main(String[] args) throws Exception {
-        userDevice = new UserDevice("192.168.0.104", 1121);
+        userDevice = new UserDevice("192.168.0.102", 1121);
         userDevice.run();
     }
 }
