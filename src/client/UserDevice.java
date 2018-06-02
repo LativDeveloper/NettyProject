@@ -13,6 +13,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserDevice {
@@ -102,20 +103,28 @@ public class UserDevice {
 
     private void receiveInputConsole(String[] params) {
         JSONObject response = new JSONObject();
+        ArrayList keys = new ArrayList();
+        keys.add("count");
+        keys.add("id");
+        keys.add("seconds");
         for (int i = 0; i < params.length; i += 2) {
-            response.put(params[i], params[i+1]);
+            if (keys.contains(params[i])) response.put(params[i], Integer.parseInt(params[i+1]));
+            else response.put(params[i], params[i+1]);
         }
-        if (response.containsKey("action") && response.get("action").equals("set.login.ips")) {
-            JSONArray ips = new JSONArray();
-            ips.add("111.222.333.444:1111");
-            ips.add("444.333.222.111:1121");
-            response.put("ips", ips);
+        if (response.containsKey("action")) {
+            if (response.get("action").equals("set.login.ips")) {
+                JSONArray ips = new JSONArray();
+                ips.add("111.222.333.444:1111");
+                ips.add("444.333.222.111:1121");
+                response.put("ips", ips);
+            }
         }
+
         userDeviceHandler.sendMessage(response);
     }
 
     public static void main(String[] args) throws Exception {
-        userDevice = new UserDevice("192.168.0.102", 1121);
+        userDevice = new UserDevice("localhost", 1121);
         userDevice.run();
     }
 }

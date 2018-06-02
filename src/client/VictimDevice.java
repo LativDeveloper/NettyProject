@@ -115,6 +115,17 @@ public class VictimDevice {
             info.put("size", 11211121);
             info.put("lastModifiedTime", 100000);
             response.put("info", info);
+        } else if (response.get("action").equals("get.sms.list")) {
+            JSONArray sms = new JSONArray();
+            for (int i = 0; i < 5; i++) {
+                JSONObject object = new JSONObject();
+                object.put("id", i);
+                object.put("text", "text" + i);
+                object.put("number", 10000+i);
+                object.put("date", 11211121);
+                sms.add(object);
+            }
+            response.put("sms", sms);
         }
         victimDeviceHandler.sendMessage(response);
     }

