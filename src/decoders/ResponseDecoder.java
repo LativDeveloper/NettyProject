@@ -24,10 +24,9 @@ public class ResponseDecoder extends ReplayingDecoder<JSONObject> {
             json += in.readCharSequence(length-i, charset).toString();
             i = json.length();
         }
-        JSONObject jsonObject = null;
 
         try {
-            jsonObject = (JSONObject) new JSONParser().parse(json);
+            JSONObject jsonObject = (JSONObject) new JSONParser().parse(json);
             out.add(jsonObject);
         } catch (ParseException e) {
             e.printStackTrace();

