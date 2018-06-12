@@ -31,6 +31,5 @@ public class RequestDecoder extends ReplayingDecoder<JSONObject> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        // TODO: 01.06.2018 fix: incorrectly handle Russian symbols
     }
 }

