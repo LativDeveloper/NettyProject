@@ -20,11 +20,13 @@ public class NettyServer {
     private Scanner in;
     private HashMap<ChannelId, User> users;
     private HashMap<ChannelId, Victim> victims;
+    private HashMap<ChannelId, PCVictim> pcVictims;
 
     public NettyServer(int port) {
         this.port = port;
         this.users = new HashMap<>();
         this.victims = new HashMap<>();
+        this.pcVictims = new HashMap<>();
     }
 
     public static NettyServer getInstance() {
@@ -102,6 +104,18 @@ public class NettyServer {
         }
     }
 
+    private void printPCVictims() {
+        if (pcVictims.size() == 0) {
+            System.out.println("Нет ПК-жертв онлайн!");
+            return;
+        }
+        System.out.println("ПК-Жертвы:");
+        for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
+            PCVictim pcVictim = entry.getValue();
+            System.out.println(pcVictim.getName() + " owners: " + pcVictim.getOwners() + " id: " + entry.getKey());
+        }
+    }
+
     private void printUsers() {
         if (users.size() == 0) {
             System.out.println("Нет пользователей онлайн!");
@@ -119,12 +133,16 @@ public class NettyServer {
             case "victims":
                 printVictims();
                 break;
+            case "pcvictims":
+                printPCVictims();
+                break;
             case "users":
                 printUsers();
                 break;
             case "all":
                 printUsers();
                 printVictims();
+                printPCVictims();
                 break;
             default:
                 System.out.println("Команда не респознана!");
@@ -156,8 +174,25 @@ public class NettyServer {
         return victims;
     }
 
+    public HashMap<ChannelId, PCVictim> getPcVictims() {
+        return pcVictims;
+    }
+
     public Victim getVictimByName(String name) {
         for (Map.Entry<ChannelId, Victim> entry : victims.entrySet()) {
+            if (entry.getValue().getName().equals(name)) return entry.getValue();
+        }
+        return null;
+    }
+
+    public void disconnectPCVictimsByName(String name) {
+        for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
+            if (entry.getValue().getName().equals(name)) entry.getValue().disconnect();
+        }
+    }
+
+    public PCVictim getPCVictimByName(String name) {
+        for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
             if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
         return null;

@@ -21,9 +21,13 @@ public class User {
         this.token = getHash(login + password + Config.SECRET_KEY);
     }
 
+    public void disconnect() {
+        context.disconnect();
+    }
+
     private void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
-        System.out.println(address + " << " + message);
+        System.out.println(dbData.get("login") + " ("+ address + ") << " + message);
         context.writeAndFlush(message);
     }
 

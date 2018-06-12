@@ -82,7 +82,7 @@ public class UserDevice {
 
     public void waitInputConsole() {
         System.out.println("Для отправки запроса на сервер воспользуйтесь шаблоном:");
-        System.out.println("key1:value1:key1:value1 - будет преобразовано в JSONObject и отправлено на сервер.");
+        System.out.println("key1:value1:key2:value2 - будет преобразовано в JSONObject и отправлено на сервер.");
         System.out.println("Ожидаем пользовательский ввод...");
         in = new Scanner(System.in);
         String input;

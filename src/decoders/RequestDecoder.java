@@ -22,10 +22,10 @@ public class RequestDecoder extends ReplayingDecoder<JSONObject> {
         String json = "";
         while (i < length) {
             json += in.readCharSequence(length-i, charset).toString();
-            i = json.length();
+            i = json.getBytes().length;
         }
 
-        try {
+        try{
             JSONObject jsonObject = (JSONObject) new JSONParser().parse(json);
             out.add(jsonObject);
         } catch (ParseException e) {
