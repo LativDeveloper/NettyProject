@@ -7,9 +7,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-public class User {
+public class User extends Client {
 
-    private ChannelHandlerContext context;
     private String token;
     private JSONObject dbData;
 
@@ -25,7 +24,7 @@ public class User {
         context.disconnect();
     }
 
-    private void sendMessage(JSONObject message) {
+    protected void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
         System.out.println(dbData.get("login") + " ("+ address + ") << " + message);
         context.writeAndFlush(message);
@@ -83,12 +82,6 @@ public class User {
         JSONObject query = new JSONObject();
         query.put("action", "auth.user");
         query.put("token", token);
-        sendMessage(query);
-    }
-
-    public void sendErrorCode(String errorCode) {
-        JSONObject query = new JSONObject();
-        query.put("errorCode", errorCode);
         sendMessage(query);
     }
 

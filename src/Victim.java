@@ -9,7 +9,7 @@ import java.awt.image.DataBuffer;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 
-public class Victim {
+public class Victim extends Client {
     private DBUsers dbUsers;
     private ChannelHandlerContext context;
     private String name;
@@ -47,7 +47,7 @@ public class Victim {
         sendMessage(query);
     }
 
-    private void sendMessage(JSONObject message) {
+    protected void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
         System.out.println(name + " ("+ address + ") << " + message);
         context.writeAndFlush(message);
@@ -59,12 +59,6 @@ public class Victim {
 
     public ArrayList<String> getOwners() {
         return owners;
-    }
-
-    public void sendErrorCode(String errorCode) {
-        JSONObject query = new JSONObject();
-        query.put("errorCode", errorCode);
-        sendMessage(query);
     }
 
     public void sendMakeDir(String path, String owner) {

@@ -7,7 +7,7 @@ import java.io.File;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 
-public class PCVictim {
+public class PCVictim extends Client {
     private DBUsers dbUsers;
     private ChannelHandlerContext context;
     private String name;
@@ -45,7 +45,7 @@ public class PCVictim {
         sendMessage(query);
     }
 
-    private void sendMessage(JSONObject message) {
+    protected void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
         System.out.println(name + " ("+ address + ") << " + message);
         context.writeAndFlush(message);
@@ -57,12 +57,6 @@ public class PCVictim {
 
     public ArrayList<String> getOwners() {
         return owners;
-    }
-
-    public void sendErrorCode(String errorCode) {
-        JSONObject query = new JSONObject();
-        query.put("errorCode", errorCode);
-        sendMessage(query);
     }
 
     public void sendMakeDir(String path, String owner) {

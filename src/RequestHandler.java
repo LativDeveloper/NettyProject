@@ -10,7 +10,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
     private ByteBuf tmp;
     private NettyServer nettyServer;
 
-    public RequestHandler(NettyServer nettyServer) {
+    RequestHandler(NettyServer nettyServer) {
         this.nettyServer = nettyServer;
     }
 

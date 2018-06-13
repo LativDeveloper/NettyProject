@@ -7,7 +7,6 @@ import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.net.SocketAddress;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
     private ChannelHandlerContext ctx;

