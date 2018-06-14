@@ -177,11 +177,20 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    void sendDownloadFile(String filename, long port, String victim) {
+    void sendStartDownloadFile(String filename, long port, String victim) {
         JSONObject query = new JSONObject();
-        query.put("action", "download.file");
+        query.put("action", "start.download.file");
         query.put("filename", filename);
         query.put("port", port);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendFinishDownloadFile(String filename, String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "finish.download.file");
+        query.put("filename", filename);
+        query.put("code", code);
         query.put("victim", victim);
         sendMessage(query);
     }

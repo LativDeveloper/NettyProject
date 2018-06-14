@@ -53,7 +53,7 @@ public class UserDevice {
 
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    UserDeviceHandler userDeviceHandler = new UserDeviceHandler();
+                    UserDeviceHandler userDeviceHandler = new UserDeviceHandler(host);
                     userDevice.setUserDeviceHandler(userDeviceHandler);
                     ch.pipeline().addLast(
                             new RequestEncoder(),

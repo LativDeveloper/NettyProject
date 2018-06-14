@@ -56,7 +56,7 @@ public class PCVictimDevice {
 
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    PCVictimDeviceHandler victimDeviceHandler = new PCVictimDeviceHandler();
+                    PCVictimDeviceHandler victimDeviceHandler = new PCVictimDeviceHandler(host);
                     pcVictimDevice.setVictimDeviceHandler(victimDeviceHandler);
                     ch.pipeline().addLast(
                             new RequestEncoder(),

