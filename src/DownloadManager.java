@@ -22,6 +22,7 @@ public class DownloadManager extends Thread {
         this.victim = victim;
         this.path = path;
 
+        path = path.replace('\\', '/');
         String[] params = path.split("/");
         this.filename = params[params.length - 1];
     }

