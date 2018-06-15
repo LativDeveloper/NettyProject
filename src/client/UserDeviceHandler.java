@@ -6,10 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.json.simple.JSONObject;
 
 import javax.print.attribute.standard.Fidelity;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketAddress;
 
@@ -44,6 +41,29 @@ public class UserDeviceHandler extends ChannelInboundHandlerAdapter {
     private void receiveMessage(JSONObject message) {
         String action = (String) message.get("action");
         switch (action) {
+            case "start.upload.file":
+                try {
+                    Socket socket = new Socket(host, Math.toIntExact((Long) message.get("port"))); //connect to server
+                    OutputStream outputStream = socket.getOutputStream();
+                    File file = new File((String) message.get("path"));
+                    if (file.isDirectory()) {
+                        sendErrorCode("fileIsDir");
+                        return;
+                    }
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    byte[] bytes = new byte[8*1024];
+                    int len;
+                    while ((len = fileInputStream.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, len); //transfer to server
+                    }
+
+                    outputStream.close();
+                    fileInputStream.close();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             case "start.download.file":
                 try {
                     String testPath = "userDownloads/";
@@ -55,7 +75,7 @@ public class UserDeviceHandler extends ChannelInboundHandlerAdapter {
                     byte[] bytes = new byte[8*1024];
                     int len;
                     while ((len = inputStream.read(bytes)) != -1) {
-                        fileOutputStream.write(bytes, 0, len);
+                        fileOutputStream.write(bytes, 0, len); //receive file from server
                     }
 
                     fileOutputStream.close();
@@ -66,6 +86,12 @@ public class UserDeviceHandler extends ChannelInboundHandlerAdapter {
                 }
                 break;
         }
+    }
+
+    private void sendErrorCode(String errorCode) {
+        JSONObject query = new JSONObject();
+        query.put("errorCode", errorCode);
+        sendMessage(query);
     }
 
     @Override

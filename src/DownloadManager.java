@@ -12,14 +12,14 @@ public class DownloadManager extends Thread {
     private FileInputStream fileInputStream;
     private FileOutputStream fileOutputStream;
 
-    private User user;
-    private Victim victim;
+    private Client source; //file from here
+    private Client target; //file to here
     private String path;
     private String filename;
 
-    public DownloadManager(User user, Victim victim, String path) {
-        this.user = user;
-        this.victim = victim;
+    DownloadManager(Client source, Client target, String path) {
+        this.source = source;
+        this.target = target;
         this.path = path;
 
         path = path.replace('\\', '/');
@@ -32,36 +32,38 @@ public class DownloadManager extends Thread {
         try {
             int port = findFreePort();
             serverSocket = new ServerSocket(port);
-            victim.sendStartDownloadFile(path, port, user.getLogin());
+            source.sendStartUploadFile(path, port, target.getName());
 
-            sourceSocket = serverSocket.accept(); //wait victim
+            sourceSocket = serverSocket.accept(); //wait source
             inputStream = sourceSocket.getInputStream();
             fileOutputStream = new FileOutputStream(Config.DOWNLOAD_PATH + filename);
             byte[] bytes = new byte[8*1024];
             int len;
             while ((len = inputStream.read(bytes)) != -1) {
-                fileOutputStream.write(bytes, 0, len); //receive file from victim
+                fileOutputStream.write(bytes, 0, len); //receive file from source
             }
 
-            user.sendStartDownloadFile(filename, port, victim.getName());
+            target.sendStartDownloadFile(filename, port, source.getName());
 
-            targetSocket = serverSocket.accept(); //wait user
+            targetSocket = serverSocket.accept(); //wait target
             outputStream = targetSocket.getOutputStream();
             fileInputStream = new FileInputStream(Config.DOWNLOAD_PATH + filename);
             while ((len = fileInputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, len); //transfer file to user
+                outputStream.write(bytes, 0, len); //transfer file to target
             }
 
-            user.sendFinishDownloadFile(filename, "success", victim.getName());
+            target.sendFinishLoadFile(filename, "success", source.getName());
+            source.sendFinishLoadFile(filename, "success", target.getName());
             dispose();
         } catch (IOException e) {
             e.printStackTrace();
-            user.sendFinishDownloadFile(filename, "error", victim.getName());
+            target.sendFinishLoadFile(filename, "error", source.getName());
+            source.sendFinishLoadFile(filename, "success", target.getName());
             dispose();
         }
     }
 
-    void dispose() {
+    private void dispose() {
         try {
             inputStream.close();
             outputStream.close();

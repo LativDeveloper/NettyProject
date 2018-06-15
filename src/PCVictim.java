@@ -1,11 +1,5 @@
-import db.DBUsers;
 import io.netty.channel.ChannelHandlerContext;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import java.io.File;
-import java.net.SocketAddress;
-import java.util.ArrayList;
 
 public class PCVictim extends Victim {
 

@@ -115,7 +115,7 @@ public class NettyServer {
         System.out.println("Пользователи:");
         for (Map.Entry<ChannelId, User> entry : users.entrySet()) {
             User user = entry.getValue();
-            System.out.println(user.getLogin() + " aVictims: " + user.getVictims() + " id: " + entry.getKey());
+            System.out.println(user.getName() + " aVictims: " + user.getVictims() + " id: " + entry.getKey());
         }
     }
 
@@ -205,7 +205,7 @@ public class NettyServer {
 
     User getUserByName(String name) {
         for (Map.Entry<ChannelId, User> entry : users.entrySet()) {
-            if (entry.getValue().getLogin().equals(name)) return entry.getValue();
+            if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
         return null;
     }

