@@ -66,9 +66,9 @@ public class UserDeviceHandler extends ChannelInboundHandlerAdapter {
                 break;
             case "start.download.file":
                 try {
-                    String testPath = "userDownloads/";
+                    String downloadPath = (String) message.get("downloadPath");
                     String filename = (String) message.get("filename");
-                    File file = new File(testPath + filename);
+                    File file = new File(downloadPath + filename);
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
                     Socket socket = new Socket(host, Math.toIntExact((Long) message.get("port")));
                     InputStream inputStream = socket.getInputStream();

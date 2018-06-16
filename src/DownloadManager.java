@@ -14,16 +14,18 @@ public class DownloadManager extends Thread {
 
     private Client source; //file from here
     private Client target; //file to here
-    private String path;
+    private String sourcePath;
+    private String targetPath;
     private String filename;
 
-    DownloadManager(Client source, Client target, String path) {
+    DownloadManager(Client source, Client target, String sourcePath, String targetPath) {
         this.source = source;
         this.target = target;
-        this.path = path;
+        this.sourcePath = sourcePath;
+        this.targetPath = targetPath;
 
-        path = path.replace('\\', '/');
-        String[] params = path.split("/");
+        sourcePath = sourcePath.replace('\\', '/');
+        String[] params = sourcePath.split("/");
         this.filename = params[params.length - 1];
     }
 
@@ -32,7 +34,7 @@ public class DownloadManager extends Thread {
         try {
             int port = findFreePort();
             serverSocket = new ServerSocket(port);
-            source.sendStartUploadFile(path, port, target.getName());
+            source.sendStartUploadFile(sourcePath, port, target.getName());
 
             sourceSocket = serverSocket.accept(); //wait source
             inputStream = sourceSocket.getInputStream();
@@ -43,7 +45,7 @@ public class DownloadManager extends Thread {
                 fileOutputStream.write(bytes, 0, len); //receive file from source
             }
 
-            target.sendStartDownloadFile(filename, port, source.getName());
+            target.sendStartDownloadFile(filename, port, targetPath, source.getName());
 
             targetSocket = serverSocket.accept(); //wait target
             outputStream = targetSocket.getOutputStream();

@@ -15,7 +15,7 @@ public class ResponseEncoder extends MessageToByteEncoder<JSONObject> {
     protected void encode(ChannelHandlerContext ctx, JSONObject msg, ByteBuf out) throws Exception {
         //System.out.println("Response encoder: " + msg);
         String json = msg.toJSONString();
-        out.writeInt(json.getBytes().length);
+        out.writeInt(json.getBytes(charset).length);
         out.writeCharSequence(json, charset);
     }
 }

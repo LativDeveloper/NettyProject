@@ -22,11 +22,12 @@ public abstract class Client {
         return name;
     }
 
-    void sendStartDownloadFile(String filename, long port, String target) {
+    void sendStartDownloadFile(String filename, long port, String downloadPath, String target) {
         JSONObject query = new JSONObject();
         query.put("action", "start.download.file");
         query.put("filename", filename);
         query.put("port", port);
+        query.put("downloadPath", downloadPath);
         query.put("target", target);
         sendMessage(query);
     }

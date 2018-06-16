@@ -22,7 +22,7 @@ public class RequestDecoder extends ReplayingDecoder<JSONObject> {
         String json = "";
         while (i < length) {
             json += in.readCharSequence(length-i, charset).toString();
-            i = json.getBytes().length;
+            i = json.getBytes(charset).length;
         }
 
         try{

