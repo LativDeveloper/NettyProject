@@ -5,6 +5,7 @@ public abstract class Client {
 
     ChannelHandlerContext context;
     String name;
+    long lastOnlineTimeMills;
 
     abstract void sendMessage(JSONObject message);
 
@@ -20,6 +21,14 @@ public abstract class Client {
 
     String getName() {
         return name;
+    }
+
+    void setLastOnlineTimeMills(long time) {
+        lastOnlineTimeMills = time;
+    }
+
+    long getLastOnlineTimeMills() {
+        return lastOnlineTimeMills;
     }
 
     void sendStartDownloadFile(String filename, long port, String downloadPath, String target) {

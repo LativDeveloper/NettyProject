@@ -9,6 +9,10 @@ public abstract class Victim extends Client {
 
     ArrayList<String> owners;
 
+    ArrayList<String> getOwners() {
+        return owners;
+    }
+
     void sendGetFiles(String path, String owner) {
         JSONObject query = new JSONObject();
         query.put("action", "get.files");
@@ -23,10 +27,6 @@ public abstract class Victim extends Client {
         query.put("path", path);
         query.put("owner", owner);
         sendMessage(query);
-    }
-
-    ArrayList<String> getOwners() {
-        return owners;
     }
 
     void sendMakeDir(String path, String owner) {

@@ -38,6 +38,8 @@ public class DownloadManager extends Thread {
 
             sourceSocket = serverSocket.accept(); //wait source
             inputStream = sourceSocket.getInputStream();
+            File downloadDir = new File(Config.DOWNLOAD_PATH);
+            if (!downloadDir.exists()) downloadDir.mkdir();
             fileOutputStream = new FileOutputStream(Config.DOWNLOAD_PATH + filename);
             byte[] bytes = new byte[8*1024];
             int len;

