@@ -7,6 +7,10 @@ public abstract class Client {
     String name;
     long lastOnlineTimeMills;
 
+    Client() {
+        lastOnlineTimeMills = System.currentTimeMillis();
+    }
+
     abstract void sendMessage(JSONObject message);
 
     void sendErrorCode(String errorCode) {

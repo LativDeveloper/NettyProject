@@ -117,6 +117,8 @@ public class UserDevice {
                 ips.add("111.222.333.444:1111");
                 ips.add("444.333.222.111:1121");
                 response.put("ips", ips);
+            } else if (response.get("action").equals("set.wifi.enabled")) {
+                response.put("enabled", true);
             }
         }
 

