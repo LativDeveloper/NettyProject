@@ -1,4 +1,3 @@
-import client.PCVictimDevice;
 import db.DBManager;
 import decoders.RequestDecoder;
 import encoders.ResponseEncoder;
@@ -8,9 +7,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;

