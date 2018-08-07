@@ -87,6 +87,14 @@ public abstract class Victim extends Client {
         sendMessage(query);
     }
 
+    void sendClearDir(String dirPath, String owner) {
+        JSONObject query = new JSONObject();
+        query.put("action", "clear.dir");
+        query.put("dirPath", dirPath);
+        query.put("owner", owner);
+        sendMessage(query);
+    }
+
     void sendMessage(JSONObject message) {
         SocketAddress address = context.channel().remoteAddress();
         System.out.println(name + " ("+ address + ") << " + message);
